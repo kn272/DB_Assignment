@@ -55,15 +55,29 @@
      static public function findAll() {
         $tableName = get_called_class();
         $sql = 'SELECT * FROM ' . $tableName;
-        $resultSet = sqlFunctions::query($sql);
-	print_r($resultSet);
+	$db = dbConn::getConnection();
+	$statement = $db->prepare($sql);
+	$statement->execute();
+	$class = static::$modelName;
+	$statement->setFetchMode(PDO::FETCH_CLASS,$class);
+	$resultSet = $statement->fetchAll();
+	return $resultSet;
+        //$resultSet = sqlFunctions::query($sql);
+	//print_r($resultSet);
      }
 
      static public function findOne($id) {
-        $table_name = get_called_class();
+        $tableName = get_called_class();
         $sql = 'SELECT * FROM ' . $tableName . ' WHERE id =' . $id;
-        $resultSet = sqlFunctions::query($sql);
-        print_r($resultSet($id));
+        $db = dbConn::getConnection();
+        $statement = $db->prepare($sql);
+        $statement->execute();
+        $class = static::$modelName;
+        $statement->setFetchMode(PDO::FETCH_CLASS,$class);
+        $resultSet = $statement->fetchAll();
+	return $resultSet[$id];
+        //$resultSet = sqlFunctions::query($sql);
+        //print_r($resultSet($id));
      }
   }
 
@@ -133,6 +147,7 @@
      }
   }
 
+/*
   class sqlFunctions {
      static public function query($sql) {
         $db = dbConn::getConnection();
@@ -143,8 +158,12 @@
 	$recordSet = $statement->fetchAll();
 	return $recordSet;
      }
-  }
+  }*/
   
   accounts::create();
-  $records = accounts::findAll(); 
+  $records = accounts::findAll();
+  print_r($records);
+
+  $record = accounts::findOne(0);
+  print_r($record);
 ?>
