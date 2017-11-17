@@ -99,20 +99,47 @@
   class model {
      protected $tableName;
 
-     static public function save() {
+     public function save() {
 
      }
 
-     static public function insert() {
-
+     public function insert() {
+        $db = dbConn::getConnection();
+	$tableName = $this->tableName;
+	$array = get_object_vars($this);
+	array_pop($array);
+	print_r($array);
+	$heading = array_keys($array);	
+	$columnString = implode(',',$heading);
+	$valueString = ':' . implode(',:',$heading);
+	$sql = 'INSERT INTO accounts (' . $columnString . ') VALUES (' . $valueString . ')';
+        //echo $sql;
+        $statement = $db->prepare($sql);
+	$statement->execute($array);
+	echo 'insert done successfully!<br>';
      }
 
-     static public function update() {
-
+     public function update($id) {
+        $db = dbConn::getConnection();
+        $tableName = $this->tableName;
+        $array = get_object_vars($this);
+        array_pop($array);
+        print_r($array);
+        $heading = array_keys($array);
+        $columnString = implode(',',$heading);
+        $valueString = ':' . implode(',:',$heading);
+	$sql = 'UPDATE ' . $tableName . 'SET ';
+	$statement = $db->prepare();
+	$statement->execute();
      }
 
-     static public function delete() {
-
+     public function delete($id) {
+        $db = dbConn::getConnection();
+	$tableName = $this->tableName;
+	$sql = 'DELETE FROM ' . $tableName . ' WHERE id=' . $id;
+	$statement = $db->prepare($sql);
+	$statement->execute();
+	echo 'row where id = ' . $id . ' deleted successfully!<br>';
      }
   }
 
@@ -135,7 +162,7 @@
 
   class todo extends model {
      public $id;
-     public $ownermail;
+     public $owneremail;
      public $ownerid;
      public $createddate;
      public $duedate;
@@ -143,7 +170,7 @@
      public $isdone;
 
      public function __construct() {
-        $this->tableName = 'todos';
+        $tableName = 'todos';
      }
   }
 
@@ -166,4 +193,16 @@
 
   $record = accounts::findOne(0);
   print_r($record);
+
+  //account::delete(1);
+
+  $acc1 = new account();
+  $acc1->fname = 'kishore';
+  $acc1->lname = 'reddy';
+  $acc1->insert();
+  $acc1->delete(1);
+
+  $todo1 = new todo();
+  $todo1->ownerid = '007';
+  $todo1->insert();
 ?>
