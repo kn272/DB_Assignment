@@ -8,18 +8,7 @@
   define('PASSWORD', 'KYhRX7n1z');
   define('CONNECTION', 'sql.njit.edu');
 
-  echo 'hello world<br>';
-/*
-  try {
-     $db = new PDO( 'mysql:host=' . CONNECTION . ';dbname=' . DATABASE, USERNAME, PASSWORD );
-     // $db = new PDO("mysql:host=sql.njit.edu;dbname=kn272,kn272,KYhRX7n1z");
-     $db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-     echo 'Connected successfully<br>';
-  }
-  catch (PDOException $e) {
-     echo "Connection Error: " . $e->getMessage();
-  }
-*/
+  //echo 'hello world<br>';
 
   class dbConn{
      protected static $db;
@@ -75,9 +64,7 @@
         $class = static::$modelName;
         $statement->setFetchMode(PDO::FETCH_CLASS,$class);
         $resultSet = $statement->fetchAll();
-	return $resultSet[$id];
-        //$resultSet = sqlFunctions::query($sql);
-        //print_r($resultSet($id));
+	return $resultSet;
      }
   }
 
@@ -124,13 +111,23 @@
         $tableName = $this->tableName;
         $array = get_object_vars($this);
         array_pop($array);
-        print_r($array);
+        //print_r($array);
         $heading = array_keys($array);
-        $columnString = implode(',',$heading);
-        $valueString = ':' . implode(',:',$heading);
-	$sql = 'UPDATE ' . $tableName . 'SET ';
-	$statement = $db->prepare();
-	$statement->execute();
+	//print_r($heading);
+	$setArray = array();
+	$setValue = array();
+	foreach($array as $key => $value) {
+           if($value!='') {
+              array_push($setValue, $key . '=' . ':' . $key);
+	      $setArray[$key] = $value;
+	   }
+	}
+	//print_r($setArray);
+	$str = implode(',',$setValue);
+	$sql = 'UPDATE ' . $tableName . ' SET ' . $str . ' WHERE id=' . $id;
+	$statement = $db->prepare($sql);
+	$statement->execute($setArray);
+	echo '<br> update done!';
      }
 
      public function delete($id) {
@@ -186,23 +183,29 @@
 	return $recordSet;
      }
   }*/
+
+
   
   accounts::create();
-  $records = accounts::findAll();
-  print_r($records);
+  //$records = accounts::findAll();
+  //print_r($records);
 
-  $record = accounts::findOne(0);
+  $record = accounts::findOne(2);
   print_r($record);
+  echo '<br>';
 
   //account::delete(1);
 
   $acc1 = new account();
-  $acc1->fname = 'kishore';
-  $acc1->lname = 'reddy';
-  $acc1->insert();
-  $acc1->delete(1);
+  //$acc1->fname = 'rajeshwari';
+  //$acc1->lname = 'krishnamoorthy';
+  //$acc1->insert();
+  //echo '<br>';
+  //$acc1->delete(1);
+  //echo '<br>';
+  $acc1->fname = 'raj';
+  $acc1->lname = 'krish';
+  $acc1->phone = '12345';
+  $acc1->update(1009);
 
-  $todo1 = new todo();
-  $todo1->ownerid = '007';
-  $todo1->insert();
 ?>
