@@ -51,7 +51,6 @@
 	$statement->setFetchMode(PDO::FETCH_CLASS,$class);
 	$resultSet = $statement->fetchAll();
 	return $resultSet;
-        //$resultSet = sqlFunctions::query($sql);
 	//print_r($resultSet);
      }
 
@@ -95,7 +94,7 @@
 	$tableName = $this->tableName;
 	$array = get_object_vars($this);
 	array_pop($array);
-	print_r($array);
+	//print_r($array);
 	$heading = array_keys($array);	
 	$columnString = implode(',',$heading);
 	$valueString = ':' . implode(',:',$heading);
@@ -103,7 +102,7 @@
         //echo $sql;
         $statement = $db->prepare($sql);
 	$statement->execute($array);
-	echo 'insert done successfully!<br>';
+	//echo 'insert done successfully!<br>';
      }
 
      public function update($id) {
@@ -127,7 +126,7 @@
 	$sql = 'UPDATE ' . $tableName . ' SET ' . $str . ' WHERE id=' . $id;
 	$statement = $db->prepare($sql);
 	$statement->execute($setArray);
-	echo '<br> update done!';
+	//echo '<br> update done!';
      }
 
      public function delete($id) {
@@ -137,6 +136,16 @@
 	$statement = $db->prepare($sql);
 	$statement->execute();
 	echo 'row where id = ' . $id . ' deleted successfully!<br>';
+     }
+
+     public function getHeading() {
+        $tableName = $this->tableName;
+	$sql = 'SHOW COLUMNS FROM ' . $tableName;
+        $db = dbConn::getConnection();
+	$statement = $db->prepare($sql);
+	$statement->execute();
+	$heading = $statement->fetchAll(PDO::FETCH_COLUMN);
+	return $heading;
      }
   }
 
@@ -184,28 +193,43 @@
      }
   }*/
 
-
+  class table {
+     static public function createTable($heading,$rows) {
+     $table = NULL;
+     $table .= "<table border = 1>";
+     foreach ($heading  as $head) {
+        $table .= "<td>$head</td>";
+     }   
+     foreach ($rows as $row) {
+        $table .= "<tr>";
+        foreach ($row as $column) {
+	   $table .= "<td>$column</td>";
+        }
+        $table .= "</tr>";
+     }
+     $table .= "</table>";
+     echo $table;
+     }
+  }
   
   accounts::create();
-  //$records = accounts::findAll();
-  //print_r($records);
-
+  $records = accounts::findAll();
   $record = accounts::findOne(2);
-  print_r($record);
-  echo '<br>';
-
-  //account::delete(1);
-
   $acc1 = new account();
-  //$acc1->fname = 'rajeshwari';
-  //$acc1->lname = 'krishnamoorthy';
-  //$acc1->insert();
-  //echo '<br>';
-  //$acc1->delete(1);
-  //echo '<br>';
-  $acc1->fname = 'raj';
-  $acc1->lname = 'krish';
-  $acc1->phone = '12345';
-  $acc1->update(1009);
-
+  $heading = $acc1->getHeading();
+  echo '<h1>findAll() using accounts</h1>';
+  echo table::createTable($heading,$records);
+  echo '<h1>findOne() using accounts</h1>';
+  echo table::createTable($heading,$record);
+  $acc1->fname = 'king';
+  $acc1->lname = 'kong';
+  $acc1->insert();
+  $arr = accounts::findOne(1016);
+  echo '<h1>Insert() using accounts with values fname=king & lname=kong';
+  echo table::createTable($heading,$arr);
+  $acc1->phone = '1234567';
+  $acc1->update(1016);
+  $arr = accounts::findOne(1016);
+  echo '<h1>Update() using accounts with value phone=1234567 where id=1016';
+  echo table::createTable($heading,$arr);
 ?>
