@@ -98,7 +98,7 @@
 	$heading = array_keys($array);	
 	$columnString = implode(',',$heading);
 	$valueString = ':' . implode(',:',$heading);
-	$sql = 'INSERT INTO accounts (' . $columnString . ') VALUES (' . $valueString . ')';
+	$sql = 'INSERT INTO ' . $tableName . ' (' . $columnString . ') VALUES (' . $valueString . ')';
         //echo $sql;
         $statement = $db->prepare($sql);
 	$statement->execute($array);
