@@ -86,7 +86,12 @@
      protected $tableName;
 
      public function save() {
-
+        if ($this->id == '') {
+	   $this->insert();
+	}
+	else {	   
+           $this->update($this->id);
+	}
      }
 
      public function insert() {
@@ -135,7 +140,7 @@
 	$sql = 'DELETE FROM ' . $tableName . ' WHERE id=' . $id;
 	$statement = $db->prepare($sql);
 	$statement->execute();
-	echo 'row where id = ' . $id . ' deleted successfully!<br>';
+	//echo 'row where id = ' . $id . ' deleted successfully!<br>';
      }
 
      public function getHeading() {
@@ -145,6 +150,7 @@
 	$statement = $db->prepare($sql);
 	$statement->execute();
 	$heading = $statement->fetchAll(PDO::FETCH_COLUMN);
+	//echo $sql . '<br>';
 	return $heading;
      }
   }
@@ -176,7 +182,7 @@
      public $isdone;
 
      public function __construct() {
-        $tableName = 'todos';
+        $this->tableName = 'todos';
      }
   }
 
@@ -198,7 +204,7 @@
      $table = NULL;
      $table .= "<table border = 1>";
      foreach ($heading  as $head) {
-        $table .= "<td>$head</td>";
+        $table .= "<th>$head</th>";
      }   
      foreach ($rows as $row) {
         $table .= "<tr>";
@@ -219,17 +225,41 @@
   $heading = $acc1->getHeading();
   echo '<h1>findAll() using accounts</h1>';
   echo table::createTable($heading,$records);
+
   echo '<h1>findOne() using accounts</h1>';
   echo table::createTable($heading,$record);
+
   $acc1->fname = 'king';
   $acc1->lname = 'kong';
   $acc1->insert();
   $arr = accounts::findOne(1016);
   echo '<h1>Insert() using accounts with values fname=king & lname=kong';
   echo table::createTable($heading,$arr);
+
   $acc1->phone = '1234567';
   $acc1->update(1016);
   $arr = accounts::findOne(1016);
   echo '<h1>Update() using accounts with value phone=1234567 where id=1016';
+  echo table::createTable($heading,$arr);
+
+  $acc1->delete(9);
+  $arr = accounts::findAll();
+  echo '<h1>delete() using accounts where id = 9</h1>';
+  echo table::createTable($heading,$arr);
+
+  todos::create();
+  $records = todos::findAll();
+  $todo1 = new todo();
+  $heading = $todo1->getHeading();
+  echo '<h1>findAll() using todos</h1>';
+  echo table::createTable($heading,$records);
+
+  $todo1->ownerid = '2';
+  $todo1->message = 'submit php program';
+  $todo1->isdone = '0';
+  $todo1->id = '1000';
+  $todo1->save();
+  $arr = todos::findAll();
+  echo '<h1>save() using todos</h1>';
   echo table::createTable($heading,$arr);
 ?>
