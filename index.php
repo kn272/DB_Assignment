@@ -16,9 +16,11 @@
   $heading = $acc1->getHeading();
   echo '<h1>findAll() using accounts</h1>';
   echo table::createTable($heading,$records);
+  echo '<hr>';
 
-  echo '<h1>findOne() using accounts</h1>';
+  echo '<h1>findOne() using accounts where id = 2 </h1>';
   echo table::createTable($heading,$record);
+  echo '<hr>';
 
   $acc1->fname = 'king';
   $acc1->lname = 'kong';
@@ -26,17 +28,20 @@
   $arr = accounts::findOne(1016);
   echo '<h1>Insert() using accounts with values fname=king & lname=kong';
   echo table::createTable($heading,$arr);
+  echo '<hr>';
 
   $acc1->phone = '1234567';
   $acc1->update(1016);
   $arr = accounts::findOne(1016);
   echo '<h1>Update() using accounts with value phone=1234567 where id=1016';
   echo table::createTable($heading,$arr);
+  echo '<hr>';
 
   $acc1->delete(9);
   $arr = accounts::findAll();
   echo '<h1>delete() using accounts where id = 9</h1>';
   echo table::createTable($heading,$arr);
+  echo '<hr>';
 
   todos::create();
   $records = todos::findAll();
@@ -44,6 +49,7 @@
   $heading = $todo1->getHeading();
   echo '<h1>findAll() using todos</h1>';
   echo table::createTable($heading,$records);
+  echo '<hr>';
 
   $todo1->ownerid = '2';
   $todo1->message = 'submit php program';
@@ -53,4 +59,5 @@
   $arr = todos::findAll();
   echo '<h1>save() using todos with value ownerid=2 where id=1000</h1>';
   echo table::createTable($heading,$arr);
+  echo '<hr>';
 ?>
