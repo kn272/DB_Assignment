@@ -3,11 +3,20 @@
   ini_set('display_errors','On');
   error_reporting(E_ALL);
   
-  include 'dbConn.php';
+/*  include 'dbConn.php';
   include 'collection.php';
   include 'model.php';
   include 'sqlFunctions.php';
   include 'table.php';
+*/
+  class classLoader {
+     public static function autoload($class) {
+        //$toLoad = str_replace('\\','/',$class);
+        include 'classes/' . $class . '.php';
+     }
+  }
+  spl_autoload_register(array('classLoader', 'autoload'));
+
   
   accounts::create();
   $records = accounts::findAll();
